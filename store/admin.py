@@ -1,13 +1,12 @@
 """This module is used to register the models in the admin panel."""
 from django.contrib import admin
-from unfold.admin import ModelAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.admin import register
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from unfold.admin import ModelAdmin, TabularInline
 from unfold.forms import AdminPasswordChangeForm , UserChangeForm, UserCreationForm
-from unfold.admin import TabularInline
 from .models import Products, Inventorys, InventoryProducts, \
     Stores, StoreProducts, RequestsStoreToInventory, Orders, \
         OrderItems

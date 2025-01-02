@@ -159,6 +159,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 UNFOLD = {
+    "DASHBOARD_CALLBACK": "store.views.dashboard_callback",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
