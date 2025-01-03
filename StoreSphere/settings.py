@@ -9,58 +9,27 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
-
+from django.urls import reverse_lazy
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9hod7x931ee&i7n5c0r%6tj5u6y*szko3mj$k@yb3ryb^-^$5#'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-UNFOLD = {
-    "SIDEBAR": {
-        "show_search": True,
-        "show_all_applications": True,
-        "show_recently_visited": True,  
-        "navigation": [
-            {
-                "title": _("Users & Groups"),
-                "items": [
-                    {"label": "Users", "link": "/admin/auth/user/"},
-                    {"label": "Groups", "link": "/admin/auth/group/"},
-                ],
-            },
-            {
-                "titel": _("Store"),
-                "items": [
-                    {"label": "Products", "link": "/admin/store/products/"},
-                    {"label": "Inventorys", "link": "/admin/store/inventorys/"},
-                    {"label": "Inventory Products",
-                        "link": "/admin/store/inventoryproducts/"},
-                    {"label": "Stores", "link": "/admin/store/stores/"},
-                    {"label": "Store Products", "link": "/admin/store/storeproducts/"},
-                    {"label": "Requests Store To Inventory",
-                        "link": "/admin/store/requestsstoretoinventory/"},
-                    {"label": "Orders", "link": "/admin/store/orders/"},
-                    {"label": "Order Items", "link": "/admin/store/orderitems/"},
-                ],
-            },
-        ],
-    }
-}
-
-
 
 INSTALLED_APPS = [
     'unfold',
@@ -155,11 +124,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
+
 
 UNFOLD = {
-    "DASHBOARD_CALLBACK": "store.views.dashboard_callback",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
