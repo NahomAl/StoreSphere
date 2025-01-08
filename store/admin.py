@@ -11,7 +11,6 @@ from .models import Products, Inventorys, InventoryProducts, \
     Stores, StoreProducts, RequestsStoreToInventory, Orders, \
         OrderItems
 
-admin.site.unregister(User)
 admin.site.unregister(Group)
 @register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
