@@ -1,4 +1,5 @@
 """Model definitions."""
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -35,7 +36,8 @@ class Inventorys(models.Model):
     """Model definition for Inventory."""
     name = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=100)
-    manager = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -79,7 +81,8 @@ class Stores(models.Model):
     """Model definition for Stores."""
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
-    manager = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
