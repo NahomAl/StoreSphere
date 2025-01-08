@@ -1,6 +1,11 @@
 """Model definitions."""
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
+class User(AbstractUser):
+    """Model definition for Users."""
+    role = models.CharField(max_length=20, choices=(('admin', 'Admin'), ('inventory_manger',
+                            'Inventory_Manager'), ('store_manager', 'Store_Manager'), ('salesman', 'Salesman')))
 class Products(models.Model):
     """Model definition for Products."""
     name = models.CharField(max_length=100, unique=True)
