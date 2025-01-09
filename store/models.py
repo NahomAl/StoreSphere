@@ -24,6 +24,8 @@ class Products(models.Model):
     def save(self, *args, **kwargs):
         if self.stock == 0:
             self.available = False
+        if self.stock < 0:
+            raise ValueError("The stock cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
@@ -69,6 +71,8 @@ class InventoryProducts(models.Model):
             old_quantity = InventoryProducts.objects.get(pk=self.pk).quantity
             product.stock += self.quantity - old_quantity
         product.save()
+        if self.quantity < 0:
+            raise ValueError("The quantity cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
@@ -114,6 +118,8 @@ class StoreProducts(models.Model):
             old_quantity = StoreProducts.objects.get(pk=self.pk).quantity
             product.stock += self.quantity - old_quantity
         product.save()
+        if self.quantity < 0:
+            raise ValueError("The quantity cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
