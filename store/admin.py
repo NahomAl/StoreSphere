@@ -18,6 +18,14 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
+    fieldsets = ('User', {'fields': ('username', 'email', 'role')}), \
+                ('Personal info', {'fields': ('first_name', 'last_name')}), \
+                ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}), \
+                ('Important dates', {'fields': ('last_login', 'date_joined')})
+    list_display = ('username', 'email', 'role')
+    list_filter = ('role',)
+    search_fields = ('username', 'email')
+
 
 @register(Group)
 class GroupAdmin(BaseGroupAdmin, ModelAdmin):
