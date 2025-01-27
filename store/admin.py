@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.admin import register
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.forms import AdminPasswordChangeForm , UserChangeForm, UserCreationForm
 from .models import User, Products, Inventorys, InventoryProducts, \
@@ -11,6 +11,7 @@ from .models import User, Products, Inventorys, InventoryProducts, \
         OrderItems
 
 admin.site.unregister(Group)
+
 @register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
     """User model admin."""

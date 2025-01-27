@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    'django_extensions',
     'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -105,7 +105,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 UNFOLD = {
     "SIDEBAR": {
         "show_search": True,
@@ -119,7 +118,7 @@ UNFOLD = {
                     {
                         "title": _("Users"),
                         "icon": "person",
-                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "link": reverse_lazy("admin:store_user_changelist"),
                     },
                     {
                         "title": _("Groups"),
@@ -177,3 +176,5 @@ UNFOLD = {
         ],
     }
 }
+
+AUTH_USER_MODEL = 'store.User'
