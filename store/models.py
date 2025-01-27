@@ -24,6 +24,8 @@ class Products(models.Model):
     def save(self, *args, **kwargs):
         if self.stock == 0:
             self.available = False
+        else:
+            self.available = True
         if self.stock < 0:
             raise ValueError("The stock cannot be negative.")
         super().save(*args, **kwargs)
