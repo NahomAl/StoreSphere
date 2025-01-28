@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 class User(AbstractUser):
     """Model definition for Users."""
@@ -27,7 +28,7 @@ class Products(models.Model):
         else:
             self.available = True
         if self.stock < 0:
-            raise ValueError("The stock cannot be negative.")
+            raise ValidationError("The stock cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
@@ -75,7 +76,7 @@ class InventoryProducts(models.Model):
             product.stock += self.quantity - old_quantity
         product.save()
         if self.quantity < 0:
-            raise ValueError("The quantity cannot be negative.")
+            raise ValidationError("The quantity cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
@@ -123,7 +124,7 @@ class StoreProducts(models.Model):
             product.stock += self.quantity - old_quantity
         product.save()
         if self.quantity < 0:
-            raise ValueError("The quantity cannot be negative.")
+            raise ValidationError("The quantity cannot be negative.")
         super().save(*args, **kwargs)
 
     class Meta:
@@ -145,6 +146,27 @@ class RequestsStoreToInventory(models.Model):
     objects = models.Manager()
     def __str__(self):
         return str(self.product)
+    
+    def save(self, *args, **kwargs):
+        if self.quantity < 0:
+            raise ValidationError("The quantity cannot be negative.")
+        if self.status == 'approved':
+            inventory_product = InventoryProducts.objects.filter(
+                inventory=self.inventory, product=self.product)
+            if inventory_product.exists():
+                inventory_product = inventory_product.first()
+                inventory_product.quantity += self.quantity
+                inventory_product.save()
+            else:
+                InventoryProducts.objects.create(
+                    inventory=self.inventory, product=self.product, quantity=self.quantity)
+            store_product = StoreProducts.objects.filter(
+                store=self.store, product=self.product)
+            if store_product.exists():
+                store_product = store_product.first()
+                store_product.quantity -= self.quantity
+                store_product.save()
+        super().save(*args, **kwargs)
 
     class Meta:
         """Meta definition for RequestsStoreToInventory."""
@@ -201,16 +223,8 @@ class OrderItems(models.Model):
             store_product = StoreProducts.objects.get(
                 store=self.order.store, product=self.product)
             if store_product.quantity < self.quantity:
-                raise ValueError("The quantity is not available in the store.")
-            store_product.quantity -= self.quantity
-            store_product.save()
-            self.total = self.product.selling_price * self.quantity
-        else:
-            old_quantity = OrderItems.objects.get(pk=self.pk).quantity
-            store_product = StoreProducts.objects.get(
-                store=self.order.store, product=self.product)
-            store_product.quantity += old_quantity - self.quantity
-            store_product.save()
+                raise ValidationError(
+                    "The quantity is not available in the store.")
             self.total = self.product.selling_price * self.quantity
         #update order total
         order = Orders.objects.get(pk=self.order.pk)

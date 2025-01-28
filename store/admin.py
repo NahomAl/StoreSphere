@@ -1,5 +1,6 @@
 """This module is used to register the models in the admin panel."""
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.admin import register
@@ -69,6 +70,11 @@ class InventoryProductsAdmin(ModelAdmin):
     search_fields = ('inventory', 'product')
     list_filter = ('inventory', 'product', 'created')
 
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
 
 @register(Stores)
 class StoresAdmin(ModelAdmin):
@@ -77,6 +83,12 @@ class StoresAdmin(ModelAdmin):
     fields = ('name', 'location', 'manager')
     search_fields = ('name', 'location', 'manager')
     list_filter = ('name', 'location', 'created')
+
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
 
 
 @register(StoreProducts)
@@ -87,10 +99,17 @@ class StoreProductsAdmin(ModelAdmin):
     search_fields = ('store', 'product')
     list_filter = ('store', 'product', 'created')
 
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
+
 
 class OrderItemsInline(TabularInline):
     """OrderItems inline admin."""
     model = OrderItems
+    fields = ('product', 'quantity')
     extra = 1
 
 @register(Orders)
@@ -102,6 +121,19 @@ class OrdersAdmin(ModelAdmin):
     list_filter = ('store', 'status', 'payment', 'created')
     inlines = [OrderItemsInline]
 
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
+
+    def save_formset(self, request, form, formset, change):
+        try:
+            formset.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)
 
 @register(OrderItems)
 class OrderItemsAdmin(ModelAdmin):
@@ -110,6 +142,12 @@ class OrderItemsAdmin(ModelAdmin):
     fields = ('order', 'product', 'quantity')
     search_fields = ('order', 'product')
     list_filter = ('order', 'product', 'created')
+
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
 
 
 @register(RequestsStoreToInventory)
@@ -121,3 +159,9 @@ class RequestsStoreToInventoryAdmin(ModelAdmin):
     search_fields = ('store', 'inventory',
                      'product', 'status')
     list_filter = ('store', 'inventory', 'product', 'status', 'created')
+
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except ValidationError as e:
+            self.message_user(request, e.message, level=messages.ERROR)
