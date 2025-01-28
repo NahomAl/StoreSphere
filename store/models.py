@@ -3,6 +3,8 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class User(AbstractUser):
     """Model definition for Users."""
@@ -83,6 +85,10 @@ class InventoryProducts(models.Model):
         """Meta definition for Inventory."""
         verbose_name = 'Inventory Product'
         verbose_name_plural = 'Inventories Products'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['inventory', 'product'], name='unique_inventory_product')
+        ]
 
 
 class Stores(models.Model):
@@ -131,6 +137,10 @@ class StoreProducts(models.Model):
         """Meta definition for StoresProduct."""
         verbose_name = 'Store Product'
         verbose_name_plural = 'Stores Products'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['store', 'product'], name='unique_store_product')
+        ]
 
 
 class RequestsStoreToInventory(models.Model):
@@ -196,6 +206,8 @@ class Orders(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is not None:
             old_status = Orders.objects.get(pk=self.pk).status
+            if old_status in ['paid', 'canceled']:
+                raise ValidationError("The order is already processed.")
             if old_status != 'paid' and self.status == 'paid':
                 order_items = OrderItems.objects.filter(order=self)
                 for item in order_items:
@@ -224,6 +236,9 @@ class OrderItems(models.Model):
         return str(self.order)
 
     def save(self, *args, **kwargs):
+        order = Orders.objects.get(pk=self.order.pk)
+        if order.status in ['paid', 'canceled']:
+            raise ValidationError("The order is already processed.")
         if self.pk is None:
             store_product = StoreProducts.objects.get(
                 store=self.order.store, product=self.product)
@@ -232,7 +247,6 @@ class OrderItems(models.Model):
                     "The quantity is not available in the store.")
             self.total = self.product.selling_price * self.quantity
         #update order total
-        order = Orders.objects.get(pk=self.order.pk)
         order.total += self.total
         order.save()
         super().save(*args, **kwargs)
@@ -240,3 +254,9 @@ class OrderItems(models.Model):
         """Meta definition for OrderItems."""
         verbose_name = 'OrderItem'
         verbose_name_plural = 'OrderItems'
+
+@receiver(pre_delete, sender=StoreProducts or InventoryProducts)
+def update_stock(sender, instance, **kwargs):
+    product = Products.objects.get(pk=instance.product.pk)
+    product.stock -= instance.quantity
+    product.save()
