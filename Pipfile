@@ -7,6 +7,10 @@ name = "pypi"
 django-unfold = "*"
 unfold = "*"
 python-dotenv = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+django-filter = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

@@ -44,6 +44,7 @@ class Inventorys(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
     def __str__(self):
         return str(self.name)
 
@@ -91,6 +92,7 @@ class Stores(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
     def __str__(self):
         return str(self.name)
 
@@ -140,6 +142,7 @@ class RequestsStoreToInventory(models.Model):
     status = models.CharField(max_length=20, choices=CHOICES, default='pending')
     created = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
     def __str__(self):
         return str(self.product)
 
