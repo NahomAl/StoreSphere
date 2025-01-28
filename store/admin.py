@@ -19,11 +19,9 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
     fieldsets = ('User', {'fields': ('username', 'email', 'role')}), \
-                ('Personal info', {'fields': ('first_name', 'last_name')}), \
-                ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}), \
-                ('Important dates', {'fields': ('last_login', 'date_joined')})
-    list_display = ('username', 'email', 'role', 'is_active', 'is_staff')
-    list_filter = ('role',)
+                ('Permissions', {'fields': ('is_active', 'is_staff', 'groups')})
+    list_display = ('username', 'email', 'role', 'is_active')
+    list_filter = ('role','is_active')
     search_fields = ('username', 'email')
 
 
@@ -38,7 +36,6 @@ class ProductsAdmin(ModelAdmin):
                     'stock', 'created', 'available')
     search_fields = ('name', 'selling_price', 'stock', 'created')
     list_filter = ('name', 'stock', 'created', 'available', 'selling_price', 'buying_price')
-    actions = ['make_available', 'make_unavailable']
 
     def get_fields(self, request, obj=None):
         fields = ['name', 'description', 'selling_price', 'available']

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework',
     'rest_framework_simplejwt',
     'djoser',
@@ -112,7 +113,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 UNFOLD = {
     "SITE_HEADER": _("Store Sphere"),
     "SITE_TITLE": _("Store Sphere"),
-    "SITE_SYMBOL": "settings",
+    "SITE_SYMBOL": "store",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
@@ -188,9 +189,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+
 }
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),

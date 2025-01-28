@@ -1,5 +1,6 @@
 """This module contains the views for the store app."""
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import StoreProducts, InventoryProducts, Products, RequestsStoreToInventory,\
       Orders, OrderItems, Stores, Inventorys
@@ -20,6 +21,7 @@ class StoreViewSet(ModelViewSet):
     permission_classes = [StorePermission]
     queryset = Stores.objects.all()
     serializer_class = StoreSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = StoreFilter
 
 class StoreProductViewSet(ModelViewSet):
@@ -27,6 +29,7 @@ class StoreProductViewSet(ModelViewSet):
     permission_classes = [StoreProductPermission]
     queryset = StoreProducts.objects.all()
     serializer_class = StoreProductSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = StoreProductFilter
 
 
@@ -35,6 +38,7 @@ class InventoryViewSet(ModelViewSet):
     permission_classes = [InventoryPermission]
     queryset = Inventorys.objects.all()
     serializer_class = InventorySerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = InventoryFilter
 
 
@@ -43,15 +47,17 @@ class InventoryProductViewSet(ModelViewSet):
     permission_classes = [InventoryProductPermission]
     queryset = InventoryProducts.objects.all()
     serializer_class = InventoryProductSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = InventoryProductFilter
 
 
 class ProductViewSet(ModelViewSet):
     """ViewSet for Product."""
     permission_classes = [ProductPermission]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
-    filterset_class = ProductFilter
 
 
 class RequestsStoreToInventoryViewSet(ModelViewSet):
@@ -59,6 +65,7 @@ class RequestsStoreToInventoryViewSet(ModelViewSet):
     permission_classes = [RequestsStoreToInventoryPermission]
     queryset = RequestsStoreToInventory.objects.all()
     serializer_class = RequestsStoreToInventorySerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = RequestsStoreToInventoryFilter
 
 class OrderViewSet(ModelViewSet):
@@ -66,6 +73,7 @@ class OrderViewSet(ModelViewSet):
     permission_classes = [OrderPermission]
     queryset = Orders.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
 
 class OrderItemViewSet(ModelViewSet):
@@ -73,4 +81,5 @@ class OrderItemViewSet(ModelViewSet):
     permission_classes = [OrderItemPermission]
     queryset = OrderItems.objects.all()
     serializer_class = OrderItemSerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = OrderItemFilter

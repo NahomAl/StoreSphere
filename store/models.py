@@ -14,7 +14,7 @@ class Products(models.Model):
     buying_price = models.FloatField()
     selling_price = models.FloatField()
     stock = models.IntegerField(default=0)
-    available = models.BooleanField(default=True)
+    available = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = models.Manager()
