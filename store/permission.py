@@ -1,6 +1,15 @@
 """This module contains the permission classes for the store app."""
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+class StorePermission(BasePermission):
+    """Permission class for Store."""
+    def has_permission(self, request, view):
+        """Check if the user has permission to access the view."""
+        if request.user.is_superuser:
+            return True
+        return (getattr(request.user, 'role', '') == 'store_manager')
+
+
 class StoreProductPermission(BasePermission):
     """Permission class for InventoryProduct."""
     def has_permission(self, request, view):
@@ -11,6 +20,15 @@ class StoreProductPermission(BasePermission):
             return True
         else:
             return (getattr(request.user, 'role', '') == 'store_manager')
+
+
+class InventoryPermission(BasePermission):
+    """Permission class for Inventory."""
+    def has_permission(self, request, view):
+        """Check if the user has permission to access the view."""
+        if request.user.is_superuser:
+            return True
+        return (getattr(request.user, 'role', '') == 'inventory_manager')
 
 
 class InventoryProductPermission(BasePermission):
@@ -42,3 +60,19 @@ class RequestsStoreToInventoryPermission(BasePermission):
         if request.user.is_superuser:
             return True
         return (getattr(request.user, 'role', '') in ['store_manager', 'inventory_manager'])
+
+class OrderPermission(BasePermission):
+    """Permission class for Order."""
+    def has_permission(self, request, view):
+        """Check if the user has permission to access the view."""
+        if request.user.is_superuser:
+            return True
+        return request.user.is_authenticated
+
+class OrderItemPermission(BasePermission):
+    """Permission class for OrderItem."""
+    def has_permission(self, request, view):
+        """Check if the user has permission to access the view."""
+        if request.user.is_superuser:
+            return True
+        return request.user.is_authenticated

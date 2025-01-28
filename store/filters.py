@@ -1,7 +1,18 @@
 """Filter classes for the models in the store app"""
 from django_filters.rest_framework import FilterSet, CharFilter
 from .models import StoreProducts, InventoryProducts, Products, RequestsStoreToInventory, \
-    Orders, OrderItems
+    Orders, OrderItems, Stores, Inventorys
+
+class StoreFilter(FilterSet):
+    """Filter class for Store."""
+    class Meta:
+        """Meta class for Store."""
+        model = Stores
+        fields = {
+            'name': ['exact'],
+            'location': ['exact'],
+            'manager': ['exact']
+        }
 
 class StoreProductFilter(FilterSet):
     """Filter class for StoreProduct."""
@@ -13,6 +24,19 @@ class StoreProductFilter(FilterSet):
             'store': ['exact'],
             'product': ['exact']
         }
+
+
+class InventoryFilter(FilterSet):
+    """Filter class for Inventory."""
+    class Meta:
+        """Meta class for Inventory."""
+        model = Inventorys
+        fields = {
+            'name': ['exact'],
+            'location': ['exact'],
+            'manager': ['exact']
+        }
+
 
 class InventoryProductFilter(FilterSet):
     """Filter class for InventoryProduct."""

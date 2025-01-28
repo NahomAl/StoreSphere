@@ -1,13 +1,20 @@
 """Serializers for store app."""
 from rest_framework import serializers
 from .models import Products, InventoryProducts, RequestsStoreToInventory, StoreProducts,\
-    Orders, OrderItems
+    Orders, OrderItems, Stores, Inventorys
 
 class ProductSerializer(serializers.ModelSerializer):
     """Serializer for Product."""
     class Meta:
         """Meta class."""
         model = Products
+        fields = '__all__'
+
+class InventorySerializer(serializers.ModelSerializer):
+    """Serializer for Inventory."""
+    class Meta:
+        """Meta class."""
+        model = Inventorys
         fields = '__all__'
 
 class InventoryProductSerializer(serializers.ModelSerializer):
@@ -22,6 +29,14 @@ class RequestsStoreToInventorySerializer(serializers.ModelSerializer):
     class Meta:
         """Meta class."""
         model = RequestsStoreToInventory
+        fields = '__all__'
+
+
+class StoreSerializer(serializers.ModelSerializer):
+    """Serializer for Store."""
+    class Meta:
+        """Meta class."""
+        model = Stores
         fields = '__all__'
 
 class StoreProductSerializer(serializers.ModelSerializer):
