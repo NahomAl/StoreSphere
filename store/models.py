@@ -135,7 +135,7 @@ class StoreProducts(models.Model):
 
 class RequestsStoreToInventory(models.Model):
     """Model definition for RequestsStoreToInventory."""
-    CHOICES = (('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected'), ('delivered', 'Delivered'))
+    CHOICES = (('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected'))
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
     inventory = models.ForeignKey(Inventorys, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -150,22 +150,27 @@ class RequestsStoreToInventory(models.Model):
     def save(self, *args, **kwargs):
         if self.quantity < 0:
             raise ValidationError("The quantity cannot be negative.")
-        if self.status == 'approved':
+        old_status = RequestsStoreToInventory.objects.get(pk=self.pk).status
+        if old_status in ['approved', 'rejected']:
+            raise ValidationError("The request is already processed.")
+        if old_status != 'approved' and self.status == 'approved':
             inventory_product = InventoryProducts.objects.filter(
                 inventory=self.inventory, product=self.product)
             if inventory_product.exists():
                 inventory_product = inventory_product.first()
-                inventory_product.quantity += self.quantity
+                if inventory_product.quantity < self.quantity:
+                    raise ValidationError("The quantity is not available in the inventory.")
+                inventory_product.quantity -= self.quantity
                 inventory_product.save()
-            else:
-                InventoryProducts.objects.create(
-                    inventory=self.inventory, product=self.product, quantity=self.quantity)
             store_product = StoreProducts.objects.filter(
                 store=self.store, product=self.product)
             if store_product.exists():
                 store_product = store_product.first()
-                store_product.quantity -= self.quantity
+                store_product.quantity += self.quantity
                 store_product.save()
+            else:
+                StoreProducts.objects.create(
+                    store=self.store, product=self.product, quantity=self.quantity)
         super().save(*args, **kwargs)
 
     class Meta:
