@@ -75,6 +75,8 @@ class InventoryProductsAdmin(ModelAdmin):
             obj.save()
         except ValidationError as e:
             self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)
 
 @register(Stores)
 class StoresAdmin(ModelAdmin):
@@ -89,6 +91,8 @@ class StoresAdmin(ModelAdmin):
             obj.save()
         except ValidationError as e:
             self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)
 
 
 @register(StoreProducts)
@@ -104,6 +108,8 @@ class StoreProductsAdmin(ModelAdmin):
             obj.save()
         except ValidationError as e:
             self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)
 
 
 class OrderItemsInline(TabularInline):
@@ -139,7 +145,7 @@ class OrdersAdmin(ModelAdmin):
 class OrderItemsAdmin(ModelAdmin):
     """OrderItems model admin."""
     list_display = ('order', 'product', 'quantity', 'total', 'created')
-    fields = ('order', 'product', 'quantity')
+    fields = ('product', 'quantity')
     search_fields = ('order', 'product')
     list_filter = ('order', 'product', 'created')
 
@@ -148,6 +154,8 @@ class OrderItemsAdmin(ModelAdmin):
             obj.save()
         except ValidationError as e:
             self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)
 
 
 @register(RequestsStoreToInventory)
@@ -155,13 +163,20 @@ class RequestsStoreToInventoryAdmin(ModelAdmin):
     """RequestsStoreToInventory model admin."""
     list_display = ('store', 'inventory', 'product',
                     'quantity', 'status', 'created')
-    fields = ('store', 'inventory', 'product', 'quantity', 'status')
+    fields = ('quantity', 'status')
     search_fields = ('store', 'inventory',
                      'product', 'status')
     list_filter = ('store', 'inventory', 'product', 'status', 'created')
-
+    
     def save_model(self, request, obj, form, change):
+        def get_queryset(self, request):
+            qs = super().get_queryset(request)
+            if request.user.is_superuser:
+                return qs
+            return qs.filter(manager=request.user)
         try:
             obj.save()
         except ValidationError as e:
             self.message_user(request, e.message, level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, e, level=messages.ERROR)

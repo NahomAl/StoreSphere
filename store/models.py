@@ -160,27 +160,28 @@ class RequestsStoreToInventory(models.Model):
     def save(self, *args, **kwargs):
         if self.quantity < 0:
             raise ValidationError("The quantity cannot be negative.")
-        old_status = RequestsStoreToInventory.objects.get(pk=self.pk).status
-        if old_status in ['approved', 'rejected']:
-            raise ValidationError("The request is already processed.")
-        if old_status != 'approved' and self.status == 'approved':
-            inventory_product = InventoryProducts.objects.filter(
-                inventory=self.inventory, product=self.product)
-            if inventory_product.exists():
-                inventory_product = inventory_product.first()
-                if inventory_product.quantity < self.quantity:
-                    raise ValidationError("The quantity is not available in the inventory.")
-                inventory_product.quantity -= self.quantity
-                inventory_product.save()
-            store_product = StoreProducts.objects.filter(
-                store=self.store, product=self.product)
-            if store_product.exists():
-                store_product = store_product.first()
-                store_product.quantity += self.quantity
-                store_product.save()
-            else:
-                StoreProducts.objects.create(
-                    store=self.store, product=self.product, quantity=self.quantity)
+        if self.pk is not None:
+            old_status = RequestsStoreToInventory.objects.get(pk=self.pk).status
+            if old_status in ['approved', 'rejected']:
+                raise ValidationError("The request is already processed.")
+            if old_status != 'approved' and self.status == 'approved':
+                inventory_product = InventoryProducts.objects.filter(
+                    inventory=self.inventory, product=self.product)
+                if inventory_product.exists():
+                    inventory_product = inventory_product.first()
+                    if inventory_product.quantity < self.quantity:
+                        raise ValidationError("The quantity is not available in the inventory.")
+                    inventory_product.quantity -= self.quantity
+                    inventory_product.save()
+                store_product = StoreProducts.objects.filter(
+                    store=self.store, product=self.product)
+                if store_product.exists():
+                    store_product = store_product.first()
+                    store_product.quantity += self.quantity
+                    store_product.save()
+                else:
+                    StoreProducts.objects.create(
+                        store=self.store, product=self.product, quantity=self.quantity)
         super().save(*args, **kwargs)
 
     class Meta:
