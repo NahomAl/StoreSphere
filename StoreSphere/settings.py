@@ -110,6 +110,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 UNFOLD = {
+    "SITE_HEADER": _("Store Sphere"),
+    "SITE_TITLE": _("Store Sphere"),
+    "SITE_SYMBOL": "settings",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
